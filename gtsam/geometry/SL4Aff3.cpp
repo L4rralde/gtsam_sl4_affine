@@ -101,6 +101,14 @@ Aff3::Aff3(const Matrix44& pose) {
   // Normalize: T = M / det^(1/4)
   const double scale = std::pow(current_det_mag, 0.25);
   T_ = M_corrected / scale;
+
+  constexpr double tol = 1e-12;
+  if (!T_.row(3).head<3>().isZero(tol)) {
+      throw std::runtime_error(
+          "Aff3 Constructor: T_ does not have zeros in the first three elements "
+          "of the last row.");
+  }
+  T_.row(3).head<3>().setZero();
 }
 
 /* ************************************************************************* */
